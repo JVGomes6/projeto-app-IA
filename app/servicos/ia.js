@@ -2,7 +2,7 @@
 // Fica separado do api.js (que cuida do login), porque a IA não usa token.
 
 // Endereço da API de IA. Troque pelo endereço do seu projeto na Vercel.
-const ENDERECO_IA = 'https://SEU-PROJETO.vercel.app';
+const ENDERECO_IA = 'https://projeto-app-ia.vercel.app/';
 
 // Envia uma pergunta para a IA e devolve o que a API responde:
 // { sucesso: true, mensagem: ..., dados: { resposta, tokens } } em caso de sucesso,
