@@ -1,0 +1,49 @@
+@baseUrl = http://localhost:3000/api/usuarios
+@contentType = application/json
+
+### 1. Cadastrar usuário
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+    "nome": "João",
+    "sobrenome": "Silva",
+    "email": "joao@email.com",
+    "usuario": "joaosilva",
+    "senha": "senha123"
+}
+
+### 2. Login (guarda o token para as próximas requisições)
+# @name login
+POST {{baseUrl}}/login
+Content-Type: {{contentType}}
+
+{
+    "login": "joao@email.com",
+    "senha": "senha123"
+}
+
+### 3. Listar SEM token — deve retornar 401
+GET {{baseUrl}}
+
+### 4. Listar COM token
+GET {{baseUrl}}
+Authorization: Bearer {{login.response.body.dados.token}}
+
+### 5. Buscar por id
+GET {{baseUrl}}/1
+Authorization: Bearer {{login.response.body.dados.token}}
+
+### 6. Alterar
+PUT {{baseUrl}}/1
+Content-Type: {{contentType}}
+Authorization: Bearer {{login.response.body.dados.token}}
+
+{
+    "nome": "João Pedro",
+    "sobrenome": "Silva Santos"
+}
+
+### 7. Excluir
+DELETE {{baseUrl}}/1
+Authorization: Bearer {{login.response.body.dados.token}}

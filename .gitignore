@@ -1,0 +1,17 @@
+# Dependências
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Ambientes e segredos (senhas de banco, etc.)
+.env
+.env.*
+
+# Sistema e editor
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
