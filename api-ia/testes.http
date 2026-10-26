@@ -1,0 +1,41 @@
+# =====================================================================
+# Testes para a extensão REST Client do VS Code
+# Clique em "Send Request" acima de cada requisição
+# =====================================================================
+
+### 1) Saúde da API (deve voltar { "status": "OK" })
+GET http://localhost:3001/saude
+
+### 2) Pergunta que o regulamento RESPONDE
+### (ajuste para algo que exista no SEU regulamento: banca, prazo, nota, orientador...)
+POST http://localhost:3001/perguntar
+Content-Type: application/json
+
+{
+  "pergunta": "Quantos membros compõem a banca de avaliação do TCC?"
+}
+
+### 3) Pergunta que o regulamento NÃO responde
+### (deve voltar: "Não encontrei isso no documento")
+POST http://localhost:3001/perguntar
+Content-Type: application/json
+
+{
+  "pergunta": "Quem foi o primeiro presidente do Brasil?"
+}
+
+### 4) Pergunta vazia (deve voltar erro 400)
+POST http://localhost:3001/perguntar
+Content-Type: application/json
+
+{
+  "pergunta": ""
+}
+
+### 5) Pergunta com mais de 500 caracteres (deve voltar erro 400)
+POST http://localhost:3001/perguntar
+Content-Type: application/json
+
+{
+  "pergunta": "Esta é uma pergunta propositalmente muito longa, criada apenas para testar a validação da API, que recusa perguntas com mais de quinhentos caracteres. Esta é uma pergunta propositalmente muito longa, criada apenas para testar a validação da API, que recusa perguntas com mais de quinhentos caracteres. Esta é uma pergunta propositalmente muito longa, criada apenas para testar a validação da API, que recusa perguntas com mais de quinhentos caracteres. Esta é uma pergunta propositalmente muito longa, criada apenas para testar a validação da API, que recusa perguntas com mais de quinhentos caracteres. "
+}
