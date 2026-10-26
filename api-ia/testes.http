@@ -1,22 +1,27 @@
 # =====================================================================
 # Testes para a extensão REST Client do VS Code
 # Clique em "Send Request" acima de cada requisição
+#
+# IMPORTANTE: o documento-base deste projeto é o "Manual de
+# Normalização de Documentos Científicos de Acordo com as Normas da
+# ABNT" (SiBi/UFPR, 2ª ed.). As perguntas dos testes 2 e 6 usam temas
+# que EXISTEM nesse manual (margens, espaçamento, citações).
 # =====================================================================
 
 ### 1) Saúde da API (deve voltar { "status": "OK" })
 GET http://localhost:3001/saude
 
-### 2) Pergunta que o regulamento RESPONDE
-### (ajuste para algo que exista no SEU regulamento: banca, prazo, nota, orientador...)
+### 2) Pergunta que o documento RESPONDE (margens -> capítulo 3)
+### (deve voltar 200 + resposta citando o capítulo/seção)
 POST http://localhost:3001/perguntar
 Content-Type: application/json
 
 {
-  "pergunta": "Quantos membros compõem a banca de avaliação do TCC?"
+  "pergunta": "Quais são as margens padrão para os documentos acadêmicos segundo o manual?"
 }
 
-### 3) Pergunta que o regulamento NÃO responde
-### (deve voltar: "Não encontrei isso no documento")
+### 3) Pergunta que o documento NÃO responde
+### (deve voltar 200 + "Não encontrei isso no documento")
 POST http://localhost:3001/perguntar
 Content-Type: application/json
 
@@ -38,4 +43,12 @@ Content-Type: application/json
 
 {
   "pergunta": "Esta é uma pergunta propositalmente muito longa, criada apenas para testar a validação da API, que recusa perguntas com mais de quinhentos caracteres. Esta é uma pergunta propositalmente muito longa, criada apenas para testar a validação da API, que recusa perguntas com mais de quinhentos caracteres. Esta é uma pergunta propositalmente muito longa, criada apenas para testar a validação da API, que recusa perguntas com mais de quinhentos caracteres. Esta é uma pergunta propositalmente muito longa, criada apenas para testar a validação da API, que recusa perguntas com mais de quinhentos caracteres. "
+}
+
+### 6) Outra pergunta que o documento RESPONDE (citação direta -> capítulo 8)
+POST http://localhost:3001/perguntar
+Content-Type: application/json
+
+{
+  "pergunta": "O que caracteriza uma citação direta longa e como ela deve ser formatada?"
 }

@@ -51,28 +51,36 @@ class AssistenteDocumento {
 
   // Envia o PDF + a pergunta ao modelo e devolve { resposta, tokens }
   async perguntar(pergunta) {
-    // Jeito atual da biblioteca: ai.interactions.create({ model, input, system_instruction })
-    const interacao = await this.ia.interactions.create({
+    // Endpoint CLÁSSICO generateContent (documentação: https://ai.google.dev/api/generate-content)
+    // ATENÇÃO: para CHAVES NOVAS, a Gemini só libera os modelos 3.x — os antigos
+    // (gemini-2.5-flash, gemini-2.0-flash) devolvem 404 "no longer available
+    // to new users". Mantenha GEMINI_MODELO=gemini-3.8-flash.
+    const resposta = await this.ia.models.generateContent({
       model: this.modelo,
-      input: [
+      contents: [
         {
-          type: 'text',
-          text: pergunta,
-        },
-        {
-          type: 'document',
-          data: this.pdfBase64,
-          mime_type: 'application/pdf',
+          role: 'user',
+          parts: [
+            {
+              inlineData: {
+                mimeType: 'application/pdf',
+                data: this.pdfBase64,
+              },
+            },
+            { text: pergunta },
+          ],
         },
       ],
-      system_instruction: INSTRUCAO_SISTEMA,
+      config: {
+        systemInstruction: INSTRUCAO_SISTEMA,
+      },
     });
 
     return {
-      resposta: interacao.output_text ?? '',
-      // total_tokens = tudo que a pergunta gastou (PDF + pergunta + resposta)
+      resposta: resposta.text ?? '',
+      // totalTokenCount = tudo que a pergunta gastou (PDF + pergunta + resposta)
       // documentação: https://ai.google.dev/gemini-api/docs/tokens
-      tokens: interacao.usage?.total_tokens ?? null,
+      tokens: resposta.usageMetadata?.totalTokenCount ?? null,
     };
   }
 }
