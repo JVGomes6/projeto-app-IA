@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -11,11 +11,19 @@ import {
 
 import { listarUsuarios } from '../servicos/api';
 
-export default function Usuarios({ token, abrirUsuario }) {
+export default function Usuarios({
+  token,
+  usuarioId,
+  aviso,
+  limparAviso,
+  abrirUsuario,
+}) {
   const [usuarios, setUsuarios] = useState([]);
   const [busca, setBusca] = useState('');
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
+  const [avisoRestricao, setAvisoRestricao] = useState(null);
+  const timerAviso = useRef(null);
 
   async function carregar() {
     setCarregando(true);
@@ -35,6 +43,54 @@ export default function Usuarios({ token, abrirUsuario }) {
     carregar();
   }, []);
 
+  // O aviso verde (de sucesso) desaparece sozinho depois de alguns segundos.
+  useEffect(() => {
+    if (!aviso) return;
+    const timer = setTimeout(limparAviso, 4000);
+    return () => clearTimeout(timer);
+  }, [aviso, limparAviso]);
+
+  // Garante que o timer do aviso amarelo seja limpo ao sair da tela.
+  useEffect(() => {
+    return () => {
+      if (timerAviso.current) {
+        clearTimeout(timerAviso.current);
+      }
+    };
+  }, []);
+
+  function mostrarAvisoRestricao(texto) {
+    setAvisoRestricao(texto);
+    if (timerAviso.current) {
+      clearTimeout(timerAviso.current);
+    }
+    timerAviso.current = setTimeout(() => setAvisoRestricao(null), 4000);
+  }
+
+  function ehOUsuarioLogado(usuario) {
+    return (
+      usuarioId !== null &&
+      usuario.id !== undefined &&
+      String(usuario.id) === String(usuarioId)
+    );
+  }
+
+  // Regra de segurança: só o próprio usuário pode abrir a edição.
+  function tocarCartao(usuario) {
+    if (limparAviso) {
+      limparAviso();
+    }
+    if (!ehOUsuarioLogado(usuario)) {
+      mostrarAvisoRestricao(
+        usuarioId === null
+          ? 'Não foi possível identificar o seu usuário. Entre novamente.'
+          : 'Você só pode editar o seu próprio usuário.'
+      );
+      return;
+    }
+    abrirUsuario(usuario);
+  }
+
   // Busca simples pelo nome (inclui o sobrenome na comparação).
   const buscaNormalizada = busca.trim().toLowerCase();
   const usuariosFiltrados = usuarios.filter((u) => {
@@ -43,17 +99,22 @@ export default function Usuarios({ token, abrirUsuario }) {
   });
 
   function renderItem({ item }) {
+    const souEu = ehOUsuarioLogado(item);
     return (
       <Pressable
         style={({ pressed }) => [
           estilos.cartao,
+          souEu && estilos.cartaoProprio,
           pressed && estilos.cartaoPressionado,
         ]}
-        onPress={() => abrirUsuario(item)}
+        onPress={() => tocarCartao(item)}
       >
-        <Text style={estilos.nome}>
-          {item.nome} {item.sobrenome}
-        </Text>
+        <View style={estilos.linhaNome}>
+          <Text style={estilos.nome}>
+            {item.nome} {item.sobrenome}
+          </Text>
+          {souEu ? <Text style={estilos.etiquetaVoce}>Você</Text> : null}
+        </View>
         <Text style={estilos.detalhe}>{item.usuario}</Text>
         <Text style={estilos.detalhe}>{item.email}</Text>
       </Pressable>
@@ -73,6 +134,10 @@ export default function Usuarios({ token, abrirUsuario }) {
           onChangeText={setBusca}
         />
 
+        {aviso ? <Text style={estilos.avisoSucesso}>{aviso}</Text> : null}
+        {avisoRestricao ? (
+          <Text style={estilos.avisoRestricao}>{avisoRestricao}</Text>
+        ) : null}
         {erro ? <Text style={estilos.erro}>{erro}</Text> : null}
 
         {carregando ? (
@@ -134,6 +199,22 @@ const estilos = StyleSheet.create({
     marginBottom: 12,
     color: '#111827',
   },
+  avisoSucesso: {
+    backgroundColor: '#DCFCE7',
+    color: '#15803D',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    fontSize: 14,
+  },
+  avisoRestricao: {
+    backgroundColor: '#FEF3C7',
+    color: '#92400E',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    fontSize: 14,
+  },
   erro: {
     color: '#DC2626',
     fontSize: 14,
@@ -153,14 +234,32 @@ const estilos = StyleSheet.create({
     padding: 14,
     marginBottom: 10,
   },
+  cartaoProprio: {
+    borderColor: '#2563EB',
+  },
   cartaoPressionado: {
     backgroundColor: '#EFF6FF',
+  },
+  linhaNome: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 2,
   },
   nome: {
     fontSize: 16,
     fontWeight: '600',
     color: '#111827',
-    marginBottom: 2,
+  },
+  etiquetaVoce: {
+    backgroundColor: '#2563EB',
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+    marginLeft: 8,
+    overflow: 'hidden',
   },
   detalhe: {
     fontSize: 14,

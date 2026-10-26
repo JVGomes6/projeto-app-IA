@@ -10,7 +10,13 @@ import {
 
 import { alterarUsuario, buscarUsuario, excluirUsuario } from '../servicos/api';
 
-export default function EditarUsuario({ token, usuario, voltar }) {
+export default function EditarUsuario({
+  token,
+  usuario,
+  voltar,
+  definirAviso,
+  aoExcluirConta,
+}) {
   const [formulario, setFormulario] = useState({
     nome: usuario.nome || '',
     sobrenome: usuario.sobrenome || '',
@@ -78,6 +84,9 @@ export default function EditarUsuario({ token, usuario, voltar }) {
         },
         token
       );
+      if (definirAviso) {
+        definirAviso('Alterações salvas com sucesso.');
+      }
       voltar();
     } catch (e) {
       setErro(e.message);
@@ -92,7 +101,7 @@ export default function EditarUsuario({ token, usuario, voltar }) {
     setErro(null);
     try {
       await excluirUsuario(usuario.id, token);
-      voltar();
+      aoExcluirConta(); // sai do app e avisa na tela de login
     } catch (e) {
       setErro(e.message);
       setConfirmando(false);
@@ -155,8 +164,8 @@ export default function EditarUsuario({ token, usuario, voltar }) {
         {confirmando ? (
           <View style={estilos.caixaConfirmacao}>
             <Text style={estilos.textoConfirmacao}>
-              Tem certeza que deseja excluir este usuário? Esta ação não pode
-              ser desfeita.
+              Tem certeza que deseja excluir sua conta? Você será desconectado
+              e esta ação não pode ser desfeita.
             </Text>
             <View style={estilos.linhaBotoes}>
               <Pressable
@@ -209,7 +218,7 @@ export default function EditarUsuario({ token, usuario, voltar }) {
               ]}
               onPress={() => setConfirmando(true)}
             >
-              <Text style={estilos.botaoExcluirTexto}>Excluir usuário</Text>
+              <Text style={estilos.botaoExcluirTexto}>Excluir minha conta</Text>
             </Pressable>
           </View>
         )}

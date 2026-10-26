@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 
@@ -15,9 +15,11 @@ export default function App() {
   const [tela, setTela] = useState('login');
   const [token, setToken] = useState(null); // vive só na memória do app
   const [nomeUsuario, setNomeUsuario] = useState('');
+  const [usuarioId, setUsuarioId] = useState(null); // id do usuário logado
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
   const [mensagemLogin, setMensagemLogin] = useState(null); // ex.: sessão expirada
   const [avisoLogin, setAvisoLogin] = useState(null); // ex.: cadastro feito
+  const [avisoUsuarios, setAvisoUsuarios] = useState(null); // ex.: alterações salvas
 
   // Se qualquer chamada a rota protegida receber 401, o serviço de API
   // avisa por aqui e o app volta para o login com a mensagem pedida.
@@ -25,29 +27,54 @@ export default function App() {
     definirAoExpirarSessao(() => {
       setToken(null);
       setNomeUsuario('');
+      setUsuarioId(null);
       setUsuarioSelecionado(null);
       setAvisoLogin(null);
+      setAvisoUsuarios(null);
       setMensagemLogin('Sua sessão expirou, entre de novo.');
       setTela('login');
     });
   }, []);
 
-  function entrarNoApp(dados, nomeResolvido) {
+  function entrarNoApp(dados, usuario) {
     setToken(dados.token);
-    setNomeUsuario(nomeResolvido || '');
+    setNomeUsuario(usuario.nome || '');
+    setUsuarioId(
+      usuario.id !== undefined && usuario.id !== null ? usuario.id : null
+    );
     setMensagemLogin(null);
     setAvisoLogin(null);
+    setAvisoUsuarios(null);
     setTela('principal');
   }
 
   function sairDoApp() {
     setToken(null);
     setNomeUsuario('');
+    setUsuarioId(null);
     setUsuarioSelecionado(null);
     setMensagemLogin(null);
     setAvisoLogin(null);
+    setAvisoUsuarios(null);
     setTela('login');
   }
+
+  // Chamado quando o usuário exclui a própria conta:
+  // sai do app e avisa na tela de login.
+  function contaExcluida() {
+    setToken(null);
+    setNomeUsuario('');
+    setUsuarioId(null);
+    setUsuarioSelecionado(null);
+    setMensagemLogin(null);
+    setAvisoUsuarios(null);
+    setAvisoLogin('Sua conta foi excluída do aplicativo.');
+    setTela('login');
+  }
+
+  const limparAvisoUsuarios = useCallback(() => {
+    setAvisoUsuarios(null);
+  }, []);
 
   function voltarAoLoginAposCadastro() {
     setAvisoLogin('Cadastro realizado! Entre com seu usuário e senha.');
@@ -90,7 +117,11 @@ export default function App() {
       {tela === 'usuarios' && (
         <Usuarios
           token={token}
+          usuarioId={usuarioId}
+          aviso={avisoUsuarios}
+          limparAviso={limparAvisoUsuarios}
           abrirUsuario={(usuario) => {
+            setAvisoUsuarios(null);
             setUsuarioSelecionado(usuario);
             setTela('editar');
           }}
@@ -102,6 +133,8 @@ export default function App() {
           token={token}
           usuario={usuarioSelecionado}
           voltar={() => setTela('usuarios')}
+          definirAviso={setAvisoUsuarios}
+          aoExcluirConta={contaExcluida}
         />
       )}
     </View>

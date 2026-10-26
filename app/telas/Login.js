@@ -17,29 +17,47 @@ export default function Login({ mensagem, aviso, aoEntrar, irParaCadastro }) {
   const [erro, setErro] = useState(null);
   const [entrando, setEntrando] = useState(false);
 
-  // Descobre o nome para o "Olá, <nome>" da tela Principal:
-  // 1) tenta o nome que a própria API devolver no login;
-  // 2) se não vier, procura na lista de usuários pelo login digitado;
-  // 3) por último, usa o próprio login digitado.
-  async function resolverNome(dados, loginUsado) {
-    if (dados && dados.usuario && dados.usuario.nome) {
-      return dados.usuario.nome;
-    }
-    if (dados && dados.nome) {
-      return dados.nome;
-    }
-    try {
-      const lista = await listarUsuarios(dados.token);
-      const eu = lista.find(
-        (u) => u.email === loginUsado || u.usuario === loginUsado
-      );
-      if (eu && eu.nome) {
-        return eu.nome;
+  // Descobre quem é o usuário logado (id e nome). O id serve para o app
+  // saber qual registro ele pode editar; o nome, para o "Olá, <nome>".
+  // 1) tenta os dados que a própria API devolver no login;
+  // 2) se não vier tudo, procura na lista pelo login digitado;
+  // 3) por último, usa o próprio login digitado como nome.
+  async function resolverUsuario(dados, loginUsado) {
+    let id = null;
+    let nome = null;
+
+    if (dados && dados.usuario) {
+      if (dados.usuario.id !== undefined && dados.usuario.id !== null) {
+        id = dados.usuario.id;
       }
-    } catch (e) {
-      // Se falhar aqui, seguimos para o fallback abaixo.
+      if (dados.usuario.nome) {
+        nome = dados.usuario.nome;
+      }
     }
-    return loginUsado;
+    if (nome === null && dados && dados.nome) {
+      nome = dados.nome;
+    }
+
+    if (id === null || nome === null) {
+      try {
+        const lista = await listarUsuarios(dados.token);
+        const eu = lista.find(
+          (u) => u.email === loginUsado || u.usuario === loginUsado
+        );
+        if (eu) {
+          if (id === null && eu.id !== undefined && eu.id !== null) {
+            id = eu.id;
+          }
+          if (nome === null && eu.nome) {
+            nome = eu.nome;
+          }
+        }
+      } catch (e) {
+        // Se falhar aqui, seguimos para o fallback abaixo.
+      }
+    }
+
+    return { id: id, nome: nome !== null ? nome : loginUsado };
   }
 
   async function fazerLogin() {
@@ -57,8 +75,8 @@ export default function Login({ mensagem, aviso, aoEntrar, irParaCadastro }) {
         setErro('A API não devolveu o token de acesso.');
         return;
       }
-      const nome = await resolverNome(dados, login.trim());
-      aoEntrar(dados, nome);
+      const usuario = await resolverUsuario(dados, login.trim());
+      aoEntrar(dados, usuario);
     } catch (e) {
       setErro(e.message);
     } finally {
