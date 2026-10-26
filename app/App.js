@@ -125,6 +125,7 @@ export default function App() {
             setUsuarioSelecionado(usuario);
             setTela('editar');
           }}
+          aoSair={sairDoApp}
         />
       )}
 
@@ -132,6 +133,7 @@ export default function App() {
         <EditarUsuario
           token={token}
           usuario={usuarioSelecionado}
+          usuarioId={usuarioId}
           voltar={() => setTela('usuarios')}
           definirAviso={setAvisoUsuarios}
           aoExcluirConta={contaExcluida}

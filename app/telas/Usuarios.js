@@ -1,14 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   ActivityIndicator,
-  FlatList,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
-
 import { listarUsuarios } from '../servicos/api';
 
 export default function Usuarios({
@@ -17,267 +16,244 @@ export default function Usuarios({
   aviso,
   limparAviso,
   abrirUsuario,
+  aoSair,
 }) {
   const [usuarios, setUsuarios] = useState([]);
   const [busca, setBusca] = useState('');
   const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState(null);
-  const [avisoRestricao, setAvisoRestricao] = useState(null);
-  const timerAviso = useRef(null);
+  const [erro, setErro] = useState('');
 
-  async function carregar() {
+  const carregar = useCallback(async () => {
     setCarregando(true);
-    setErro(null);
+    setErro('');
     try {
       const lista = await listarUsuarios(token);
-      setUsuarios(lista);
+      setUsuarios(lista || []);
     } catch (e) {
       setErro(e.message);
     } finally {
       setCarregando(false);
     }
-  }
+  }, [token]);
 
-  // Carrega a lista assim que a tela abre.
   useEffect(() => {
     carregar();
-  }, []);
+  }, [carregar]);
 
-  // O aviso verde (de sucesso) desaparece sozinho depois de alguns segundos.
+  // Aviso (ex.: "Alterações salvas") some sozinho depois de 4 segundos
   useEffect(() => {
-    if (!aviso) return;
-    const timer = setTimeout(limparAviso, 4000);
-    return () => clearTimeout(timer);
+    if (aviso && limparAviso) {
+      const timer = setTimeout(limparAviso, 4000);
+      return () => clearTimeout(timer);
+    }
   }, [aviso, limparAviso]);
 
-  // Garante que o timer do aviso amarelo seja limpo ao sair da tela.
-  useEffect(() => {
-    return () => {
-      if (timerAviso.current) {
-        clearTimeout(timerAviso.current);
-      }
-    };
-  }, []);
-
-  function mostrarAvisoRestricao(texto) {
-    setAvisoRestricao(texto);
-    if (timerAviso.current) {
-      clearTimeout(timerAviso.current);
-    }
-    timerAviso.current = setTimeout(() => setAvisoRestricao(null), 4000);
-  }
-
-  function ehOUsuarioLogado(usuario) {
-    return (
-      usuarioId !== null &&
-      usuario.id !== undefined &&
-      String(usuario.id) === String(usuarioId)
-    );
-  }
-
-  // Regra de segurança: só o próprio usuário pode abrir a edição.
-  function tocarCartao(usuario) {
-    if (limparAviso) {
-      limparAviso();
-    }
-    if (!ehOUsuarioLogado(usuario)) {
-      mostrarAvisoRestricao(
-        usuarioId === null
-          ? 'Não foi possível identificar o seu usuário. Entre novamente.'
-          : 'Você só pode editar o seu próprio usuário.'
-      );
-      return;
-    }
-    abrirUsuario(usuario);
-  }
-
-  // Busca simples pelo nome (inclui o sobrenome na comparação).
-  const buscaNormalizada = busca.trim().toLowerCase();
-  const usuariosFiltrados = usuarios.filter((u) => {
-    const nomeCompleto = `${u.nome || ''} ${u.sobrenome || ''}`.toLowerCase();
-    return nomeCompleto.includes(buscaNormalizada);
-  });
-
-  function renderItem({ item }) {
-    const souEu = ehOUsuarioLogado(item);
-    return (
-      <Pressable
-        style={({ pressed }) => [
-          estilos.cartao,
-          souEu && estilos.cartaoProprio,
-          pressed && estilos.cartaoPressionado,
-        ]}
-        onPress={() => tocarCartao(item)}
-      >
-        <View style={estilos.linhaNome}>
-          <Text style={estilos.nome}>
-            {item.nome} {item.sobrenome}
-          </Text>
-          {souEu ? <Text style={estilos.etiquetaVoce}>Você</Text> : null}
-        </View>
-        <Text style={estilos.detalhe}>{item.usuario}</Text>
-        <Text style={estilos.detalhe}>{item.email}</Text>
-      </Pressable>
-    );
-  }
+  const termo = busca.trim().toLowerCase();
+  const usuariosFiltrados = usuarios.filter((u) =>
+    `${u.nome} ${u.sobrenome}`.toLowerCase().includes(termo)
+  );
 
   return (
-    <View style={estilos.raiz}>
-      <View style={estilos.conteudo}>
+    <View style={estilos.tela}>
+      {/* Cabeçalho: título + botão Sair */}
+      <View style={estilos.cabecalho}>
         <Text style={estilos.titulo}>Usuários</Text>
-
-        <TextInput
-          style={estilos.input}
-          placeholder="Buscar pelo nome..."
-          placeholderTextColor="#9CA3AF"
-          value={busca}
-          onChangeText={setBusca}
-        />
-
-        {aviso ? <Text style={estilos.avisoSucesso}>{aviso}</Text> : null}
-        {avisoRestricao ? (
-          <Text style={estilos.avisoRestricao}>{avisoRestricao}</Text>
-        ) : null}
-        {erro ? <Text style={estilos.erro}>{erro}</Text> : null}
-
-        {carregando ? (
-          <ActivityIndicator style={estilos.carregando} color="#2563EB" />
-        ) : (
-          <FlatList
-            style={estilos.lista}
-            data={usuariosFiltrados}
-            keyExtractor={(item, indice) =>
-              item.id !== undefined && item.id !== null
-                ? String(item.id)
-                : String(indice)
-            }
-            renderItem={renderItem}
-            ListEmptyComponent={
-              <Text style={estilos.listaVazia}>
-                {usuarios.length === 0
-                  ? 'Nenhum usuário cadastrado ainda.'
-                  : 'Nenhum usuário encontrado para essa busca.'}
-              </Text>
-            }
-          />
-        )}
-
-        <Pressable style={estilos.linkBotao} onPress={carregar}>
-          <Text style={estilos.linkTexto}>Atualizar lista</Text>
+        <Pressable
+          style={({ pressed }) => [
+            estilos.botaoSair,
+            pressed && estilos.botaoSairAtivo,
+          ]}
+          onPress={() => aoSair && aoSair()}
+        >
+          <Text style={estilos.textoBotaoSair}>Sair</Text>
         </Pressable>
       </View>
+
+      {/* Aviso verde (ex.: alterações salvas) */}
+      {aviso ? (
+        <View style={estilos.aviso}>
+          <Text style={estilos.textoAviso}>{aviso}</Text>
+        </View>
+      ) : null}
+
+      <TextInput
+        style={estilos.campoBusca}
+        placeholder="Buscar pelo nome..."
+        value={busca}
+        onChangeText={setBusca}
+      />
+
+      {erro !== '' && <Text style={estilos.erro}>{erro}</Text>}
+
+      {carregando ? (
+        <ActivityIndicator style={estilos.carregando} color="#2563eb" />
+      ) : (
+        <ScrollView
+          style={estilos.lista}
+          contentContainerStyle={estilos.conteudoLista}
+        >
+          {usuariosFiltrados.length === 0 && (
+            <Text style={estilos.semResultados}>
+              Nenhum usuário encontrado.
+            </Text>
+          )}
+
+          {usuariosFiltrados.map((u) => {
+            const ehVoce = String(u.id) === String(usuarioId);
+            return (
+              <Pressable
+                key={String(u.id)}
+                style={({ pressed }) => [
+                  estilos.cartao,
+                  pressed && estilos.cartaoPressionado,
+                ]}
+                onPress={() => abrirUsuario && abrirUsuario(u)}
+              >
+                <View style={estilos.linhaNome}>
+                  <Text style={estilos.nome}>
+                    {u.nome} {u.sobrenome}
+                  </Text>
+                  {ehVoce && <Text style={estilos.etiquetaVoce}>Você</Text>}
+                </View>
+                <Text style={estilos.textoSecundario}>{u.usuario}</Text>
+                <Text style={estilos.textoSecundario}>{u.email}</Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+      )}
+
+      <Pressable onPress={carregar}>
+        <Text style={estilos.linkAtualizar}>Atualizar lista</Text>
+      </Pressable>
     </View>
   );
 }
 
 const estilos = StyleSheet.create({
-  raiz: {
+  tela: {
     flex: 1,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#f4f5f7',
+    padding: 20,
+    paddingTop: 50,
   },
-  conteudo: {
-    flex: 1,
-    width: '100%',
-    maxWidth: 420,
-    alignSelf: 'center',
-    padding: 24,
-  },
-  titulo: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
+  cabecalho: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 16,
   },
-  input: {
-    backgroundColor: '#FFFFFF',
+  titulo: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#1f2937',
+  },
+  botaoSair: {
+    backgroundColor: '#ffffff',
     borderWidth: 1,
-    borderColor: '#D1D5DB',
+    borderColor: '#dc2626',
     borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    cursor: 'pointer',
+  },
+  botaoSairAtivo: {
+    backgroundColor: '#dc2626',
+  },
+  textoBotaoSair: {
+    color: '#dc2626',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  aviso: {
+    backgroundColor: '#dcfce7',
+    borderWidth: 1,
+    borderColor: '#86efac',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 12,
+  },
+  textoAviso: {
+    color: '#166534',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  campoBusca: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 10,
     paddingHorizontal: 12,
-    paddingVertical: 12,
-    fontSize: 16,
+    paddingVertical: 10,
     marginBottom: 12,
-    color: '#111827',
-  },
-  avisoSucesso: {
-    backgroundColor: '#DCFCE7',
-    color: '#15803D',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-    fontSize: 14,
-  },
-  avisoRestricao: {
-    backgroundColor: '#FEF3C7',
-    color: '#92400E',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-    fontSize: 14,
+    fontSize: 15,
+    color: '#1f2937',
   },
   erro: {
-    color: '#DC2626',
+    color: '#dc2626',
     fontSize: 14,
     marginBottom: 8,
   },
   carregando: {
-    marginTop: 32,
+    marginTop: 24,
   },
   lista: {
     flex: 1,
   },
+  conteudoLista: {
+    paddingBottom: 12,
+  },
+  semResultados: {
+    textAlign: 'center',
+    color: '#6b7280',
+    marginTop: 20,
+    fontSize: 14,
+  },
   cartao: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#ffffff',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 10,
+    borderColor: '#e5e7eb',
+    borderRadius: 12,
     padding: 14,
     marginBottom: 10,
-  },
-  cartaoProprio: {
-    borderColor: '#2563EB',
+    cursor: 'pointer',
   },
   cartaoPressionado: {
-    backgroundColor: '#EFF6FF',
+    backgroundColor: '#f9fafb',
   },
   linhaNome: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 2,
+    gap: 8,
+    marginBottom: 4,
   },
   nome: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: 'bold',
     color: '#111827',
+    textTransform: 'uppercase',
   },
   etiquetaVoce: {
-    backgroundColor: '#2563EB',
-    color: '#FFFFFF',
+    backgroundColor: '#2563eb',
+    color: '#ffffff',
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: 'bold',
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 999,
-    marginLeft: 8,
     overflow: 'hidden',
   },
-  detalhe: {
-    fontSize: 14,
-    color: '#6B7280',
+  textoSecundario: {
+    color: '#6b7280',
+    fontSize: 13,
   },
-  listaVazia: {
+  linkAtualizar: {
     textAlign: 'center',
-    color: '#6B7280',
-    marginTop: 24,
+    color: '#2563eb',
+    fontWeight: '600',
     fontSize: 14,
-  },
-  linkBotao: {
-    alignItems: 'center',
-    marginTop: 12,
-    marginBottom: 4,
-  },
-  linkTexto: {
-    color: '#2563EB',
-    fontSize: 15,
+    paddingVertical: 12,
+    cursor: 'pointer',
   },
 });
