@@ -1,8 +1,10 @@
 // Serviço de comunicação com a API de IA.
 // Fica separado do api.js (que cuida do login), porque a IA não usa token.
 
-// Endereço da API de IA. Troque pelo endereço do seu projeto na Vercel.
-const ENDERECO_IA = 'https://projeto-app-ia.vercel.app/';
+// Endereço da API de IA.
+// Enquanto testa no computador: http://localhost:3001 (porta onde a api-ia roda).
+// Quando publicar a API na Vercel, troque para https://SEU-PROJETO.vercel.app
+const ENDERECO_IA = 'http://localhost:3001';
 
 // Envia uma pergunta para a IA e devolve o que a API responde:
 // { sucesso: true, mensagem: ..., dados: { resposta, tokens } } em caso de sucesso,
@@ -46,11 +48,10 @@ export async function perguntarIA(pergunta) {
       dados: null,
     };
   } catch (erro) {
-    // Falha de rede, endereço errado, serviço fora do ar etc.
+    // Falha de rede, endereço errado, API desligada ou CORS bloqueando.
     return {
       sucesso: false,
-      mensagem:
-        'Não foi possível conectar à API de IA. Verifique sua conexão e o endereço do serviço.',
+      mensagem: `Não foi possível conectar à API de IA em ${ENDERECO_IA}. Confira se ela está rodando e se o endereço está certo.`,
       dados: null,
     };
   }
