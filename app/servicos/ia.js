@@ -3,8 +3,8 @@
 
 // Endereço da API de IA.
 // Enquanto testa no computador: http://localhost:3001 (porta onde a api-ia roda).
-// Quando publicar a API na Vercel, troque para https://SEU-PROJETO.vercel.app
-const ENDERECO_IA = 'http://localhost:3001';
+// Endereço de produção da API de IA na Vercel.
+const ENDERECO_IA = 'https://projeto-app-ia.vercel.app';
 
 // Envia uma pergunta para a IA e devolve o que a API responde:
 // { sucesso: true, mensagem: ..., dados: { resposta, tokens } } em caso de sucesso,

@@ -9,6 +9,7 @@ web-build/
 # Ambientes e segredos (senhas de banco, etc.)
 .env
 .env.*
+!.env.example
 
 # Sistema e editor
 .DS_Store

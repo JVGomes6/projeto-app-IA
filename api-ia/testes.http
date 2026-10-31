@@ -13,7 +13,7 @@ GET http://localhost:3001/saude
 
 ### 2) Pergunta que o documento RESPONDE (margens -> capítulo 3)
 ### (deve voltar 200 + resposta citando o capítulo/seção)
-POST http://localhost:3001/perguntar
+POST https://projeto-app-ia.vercel.app/perguntar
 Content-Type: application/json
 
 {
