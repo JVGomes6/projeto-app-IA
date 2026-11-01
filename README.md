@@ -108,6 +108,25 @@ celular físico ou em um emulador, ajuste os endereços em
 acessível pelo dispositivo, como o IP local do computador. No emulador Android
 use, em geral, `10.0.2.2` para acessar o computador host.
 
+### Publicar a API de usuários na Vercel com Neon
+
+A API de usuários pode ser implantada como um projeto Vercel separado. O
+repositório inclui um adaptador serverless em `api-usuarios/api/index.js` e a
+configuração de rotas em `api-usuarios/vercel.json`. Ao importar o repositório,
+selecione `api-usuarios` como **Root Directory**.
+
+Cadastre estas variáveis em **Project Settings → Environment Variables**:
+
+- `DATABASE_URL`: URL de conexão PostgreSQL do Neon, copiada de **Connect →
+  Postgres database → Node.js → .env**. Mantenha essa credencial privada.
+- `JWT_SECRET`: segredo forte e aleatório usado para assinar os tokens de login.
+
+Depois do deploy, teste `/saude` no domínio gerado. Para conectar o app, troque
+`URL_API` em `app/servicos/api.js` para
+`https://SEU-DOMINIO.vercel.app/api/usuarios` e publique novamente o app web.
+As rotas abertas de cadastro e login ficam em `/api/usuarios` e
+`/api/usuarios/login`; as demais exigem o token JWT.
+
 ## API de IA: endereço e exemplo de pedido
 
 Localmente, envie pedidos para:

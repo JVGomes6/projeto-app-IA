@@ -5,8 +5,6 @@ require('dotenv').config()
 const usuarioRoutes = require('./src/routes/usuarioRoutes')
 
 const app = express()
-const PORT = process.env.PORT || 3000
-
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -60,15 +58,21 @@ app.use((err, req, res, next) => {
     })
 })
 
-app.listen(PORT, () => {
-    console.log(`
+if (require.main === module) {
+    const PORT = process.env.PORT || 3000
+
+    app.listen(PORT, () => {
+        console.log(`
         - Servidor rodando na porta ${PORT}
         - API de Usuários
         - http://localhost:${PORT}
         `)
-})
+    })
 
-process.on('unhandledRejection', (err) => {
-    console.error('Rejeição não tratada:', err)
-    process.exit(1)
-})
+    process.on('unhandledRejection', (err) => {
+        console.error('Rejeição não tratada:', err)
+        process.exit(1)
+    })
+}
+
+module.exports = app
