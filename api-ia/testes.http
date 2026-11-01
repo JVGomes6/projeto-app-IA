@@ -9,7 +9,7 @@
 # =====================================================================
 
 ### 1) Saúde da API (deve voltar { "status": "OK" })
-GET http://localhost:3001/saude
+GET https://projeto-app-ia.vercel.app/saude
 
 ### 2) Pergunta que o documento RESPONDE (margens -> capítulo 3)
 ### (deve voltar 200 + resposta citando o capítulo/seção)
@@ -22,7 +22,7 @@ Content-Type: application/json
 
 ### 3) Pergunta que o documento NÃO responde
 ### (deve voltar 200 + "Não encontrei isso no documento")
-POST http://localhost:3001/perguntar
+POST https://projeto-app-ia.vercel.app/perguntar
 Content-Type: application/json
 
 {
@@ -30,7 +30,7 @@ Content-Type: application/json
 }
 
 ### 4) Pergunta vazia (deve voltar erro 400)
-POST http://localhost:3001/perguntar
+POST https://projeto-app-ia.vercel.app/perguntar
 Content-Type: application/json
 
 {
@@ -38,7 +38,7 @@ Content-Type: application/json
 }
 
 ### 5) Pergunta com mais de 500 caracteres (deve voltar erro 400)
-POST http://localhost:3001/perguntar
+POST https://projeto-app-ia.vercel.app/perguntar
 Content-Type: application/json
 
 {
@@ -46,7 +46,7 @@ Content-Type: application/json
 }
 
 ### 6) Outra pergunta que o documento RESPONDE (citação direta -> capítulo 8)
-POST http://localhost:3001/perguntar
+POST https://projeto-app-ia.vercel.app/perguntar
 Content-Type: application/json
 
 {
