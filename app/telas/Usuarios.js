@@ -15,6 +15,7 @@ export default function Usuarios({
   usuarioId,
   aviso,
   limparAviso,
+  voltarParaPrincipal,
   abrirUsuario,
   aoSair,
 }) {
@@ -55,18 +56,29 @@ export default function Usuarios({
 
   return (
     <View style={estilos.tela}>
-      {/* Cabeçalho: título + botão Sair */}
+      {/* Cabeçalho: título e ações da tela */}
       <View style={estilos.cabecalho}>
         <Text style={estilos.titulo}>Usuários</Text>
-        <Pressable
-          style={({ pressed }) => [
-            estilos.botaoSair,
-            pressed && estilos.botaoSairAtivo,
-          ]}
-          onPress={() => aoSair && aoSair()}
-        >
-          <Text style={estilos.textoBotaoSair}>Sair</Text>
-        </Pressable>
+        <View style={estilos.acoesCabecalho}>
+          <Pressable
+            style={({ pressed }) => [
+              estilos.botaoVoltar,
+              pressed && estilos.botaoVoltarAtivo,
+            ]}
+            onPress={() => voltarParaPrincipal && voltarParaPrincipal()}
+          >
+            <Text style={estilos.textoBotaoVoltar}>Voltar</Text>
+          </Pressable>
+          <Pressable
+            style={({ pressed }) => [
+              estilos.botaoSair,
+              pressed && estilos.botaoSairAtivo,
+            ]}
+            onPress={() => aoSair && aoSair()}
+          >
+            <Text style={estilos.textoBotaoSair}>Sair</Text>
+          </Pressable>
+        </View>
       </View>
 
       {/* Aviso verde (ex.: alterações salvas) */}
@@ -143,6 +155,10 @@ const estilos = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 16,
   },
+  acoesCabecalho: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   titulo: {
     fontSize: 26,
     fontWeight: 'bold',
@@ -162,6 +178,24 @@ const estilos = StyleSheet.create({
   },
   textoBotaoSair: {
     color: '#dc2626',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  botaoVoltar: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#2563eb',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginRight: 8,
+    cursor: 'pointer',
+  },
+  botaoVoltarAtivo: {
+    backgroundColor: '#dbeafe',
+  },
+  textoBotaoVoltar: {
+    color: '#2563eb',
     fontWeight: 'bold',
     fontSize: 14,
   },

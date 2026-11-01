@@ -120,6 +120,7 @@ export default function App() {
           usuarioId={usuarioId}
           aviso={avisoUsuarios}
           limparAviso={limparAvisoUsuarios}
+          voltarParaPrincipal={() => setTela('principal')}
           abrirUsuario={(usuario) => {
             setAvisoUsuarios(null);
             setUsuarioSelecionado(usuario);

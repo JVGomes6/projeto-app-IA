@@ -141,8 +141,11 @@ export default function Principal({ nome, irParaUsuarios, sair }) {
   function renderVazio() {
     return (
       <View style={estilos.caixaVazia}>
+        <Text style={estilos.tituloVazio}>
+          Tire suas dúvidas sobre o regulamento do TCC
+        </Text>
         <Text style={estilos.textoVazio}>
-          Mande a sua primeira pergunta para a IA!
+          Pergunte sobre as regras, etapas ou requisitos descritos no documento.
         </Text>
       </View>
     );
@@ -383,6 +386,14 @@ const estilos = StyleSheet.create({
     color: '#9CA3AF',
     fontSize: 14,
     textAlign: 'center',
+    lineHeight: 20,
+  },
+  tituloVazio: {
+    color: '#374151',
+    fontSize: 15,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 8,
   },
   linhaMensagem: {
     marginTop: 8,

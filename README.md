@@ -17,6 +17,11 @@ com base no PDF disponibilizado no projeto.
   editar e excluir usuários.
 - Envia perguntas sobre o documento de TCC para uma API de IA. A resposta deve
   se basear no documento e indicar a seção ou artigo relevante.
+- Exibe uma orientação na área vazia do chat com exemplos de assuntos que o
+  usuário pode perguntar.
+- Na lista de usuários, oferece o botão **Voltar** para retornar à tela
+  principal sem encerrar a sessão; **Sair** continua disponível para voltar ao
+  login.
 
 ## Estrutura
 
@@ -230,6 +235,8 @@ revogue-a no provedor e gere uma nova.
 | Variáveis de ambiente de exemplo, sem credenciais reais | `api-usuarios/.env.example` e `api-ia/.env.example` |
 | Token mantido em memória, apagado ao sair e enviado nas chamadas protegidas | `app/App.js` e `app/servicos/api.js` |
 | Exibição da mensagem de erro de login devolvida pela API | `app/telas/Login.js` e `app/servicos/api.js` |
+| Orientação inicial sobre o que perguntar no chat | `app/telas/Principal.js` |
+| Retorno da lista de usuários à tela principal sem encerrar a sessão | `app/App.js` e `app/telas/Usuarios.js` |
 | Endereço da API de IA usado pelo app e chamada `POST /perguntar` | `app/servicos/ia.js` |
 | Rota de saúde, validações e resposta da API de IA | `api-ia/index.js` |
 | Envio do PDF, modelo Gemini e instrução de sistema | `api-ia/assistente-documento.js` |

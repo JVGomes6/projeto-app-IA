@@ -663,6 +663,27 @@ para alta demanda simulada. Você informou que fez push das alterações; a
 conclusão do novo deploy e o teste online após o deploy ainda precisam ser
 confirmados. Aumentar o tempo não elimina uma sobrecarga temporária do Gemini.
 
+### Fase 7 — melhorias de orientação e navegação no app
+
+**Pedidos registrados em 01/11/2026:**
+
+1. Na tela principal, adicionar uma linha explicando o que o usuário pode
+   perguntar ao chat. A tela passou a apresentar uma orientação inicial sobre
+   perguntas relacionadas ao documento, com exemplos de assuntos.
+2. Na tela de usuários mostrada em uma captura, adicionar um botão para voltar
+   à tela principal. O botão **Voltar** retorna sem encerrar a sessão; o botão
+   **Sair** continua disponível para voltar ao login.
+3. Atualizar este `README.md` e este `prompts.md` para registrar as mudanças.
+
+**Decisões de implementação:** manter o texto de orientação na tela vazia do
+chat, sem alterar o campo de entrada nem o comportamento de envio; fazer a
+navegação da lista à tela principal por uma callback já controlada pelo estado
+de telas em `app/App.js`.
+
+**Conferências registradas:** a compilação web do app passou após as mudanças.
+As prévias foram abertas no navegador; a tela de usuários da prévia usou dados
+de exemplo apenas temporariamente, sem manter esses dados no código final.
+
 ## IAs utilizadas — distinção entre assistentes e modelo do aplicativo
 
 | Uso | IA identificada nos registros | O que os materiais permitem afirmar |
