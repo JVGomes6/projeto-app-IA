@@ -4,6 +4,12 @@ Este repositório contém três partes: um aplicativo Expo/React Native, uma API
 para cadastro e autenticação de usuários e uma API de IA que responde perguntas
 com base no PDF disponibilizado no projeto.
 
+## Acessar o projeto online
+
+- **Aplicativo web:** [abrir o app](https://projeto-app-ia-app.vercel.app/)
+- **API de usuários:** [verificar a API](https://projeto-app-ia-2h3z.vercel.app/saude)
+- **API de IA:** [verificar a API](https://projeto-app-ia.vercel.app/saude)
+
 ## O que o aplicativo faz?
 
 - Permite cadastrar usuários e entrar com e-mail ou nome de usuário.
@@ -150,21 +156,17 @@ Uma resposta bem-sucedida inclui `dados.resposta` e `dados.tokens`.
 
 ### Endereço online
 
-O repositório contém configuração para publicar a API de IA na Vercel, mas não
-contém um domínio de produção publicado. Depois de fazer o deploy, substitua
-`SEU-PROJETO` pelo domínio atribuído pela Vercel. O endereço completo do pedido
-será:
+O endpoint publicado para enviar perguntas é:
 
 ```text
-POST https://SEU-PROJETO.vercel.app/perguntar
+POST https://projeto-app-ia.vercel.app/perguntar
 Content-Type: application/json
 ```
 
-Use o mesmo JSON de exemplo acima. Para que o aplicativo use a API publicada,
-altere a constante `ENDERECO_IA` em `app/servicos/ia.js` para
-`https://SEU-PROJETO.vercel.app` (sem acrescentar `/perguntar`, pois a rota é
-adicionada pelo próprio serviço). A publicação da API de usuários é separada:
-configure também `URL_API` em `app/servicos/api.js` para o domínio dessa API.
+Use o mesmo JSON de exemplo acima. O app usa essa API por meio da constante
+`ENDERECO_IA` em `app/servicos/ia.js`. A API de usuários é publicada
+separadamente; seu endereço está configurado em `URL_API`, no arquivo
+`app/servicos/api.js`.
 
 ## Qual IA é usada: DeepSeek, Z.AI ou outra?
 
