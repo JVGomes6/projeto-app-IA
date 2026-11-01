@@ -494,6 +494,31 @@ em cada pergunta; portanto o valor merece acompanhamento. Esse número é o
 resultado daquela chamada, não uma medição de todas as perguntas nem uma
 garantia de consumo futuro.
 
+### Etapa posterior — investigação de timeout da API de IA
+
+Em **01/11/2026**, você informou que o chat online mostrava uma falha ao
+conectar à API de IA. A conferência direta mostrou que `/saude` respondia, mas
+uma chamada válida a `/perguntar` terminava com HTTP 504. Os Runtime Logs da
+Vercel confirmaram execuções encerradas após 30 segundos. Também mostraram uma
+resposta 503 do Gemini por alta demanda e um `ReferenceError` porque
+`ehErroDeCotaDiaria` era chamada sem estar definida no código implantado.
+
+**Correções feitas por Copilot no código:**
+
+- Adicionar `ehErroDeCotaDiaria` para classificar erros de cota diária sem
+  causar `ReferenceError`.
+- Tratar HTTP 503 e mensagens de alta demanda/sobrecarga como indisponibilidade
+  temporária do Gemini, respondendo ao cliente com uma mensagem para tentar
+  novamente mais tarde.
+- Aumentar de 30 para 60 segundos o `maxDuration` da função em
+  `api-ia/vercel.json`. A aplicação desse limite depende do plano da Vercel.
+
+**Validação registrada:** verificações locais confirmaram a sintaxe do servidor,
+a configuração de 60 segundos e as respostas HTTP 429 para cota diária e 503
+para alta demanda simulada. Você informou que fez push das alterações; a
+conclusão do novo deploy e o teste online após o deploy ainda precisam ser
+confirmados. Aumentar o tempo não elimina uma sobrecarga temporária do Gemini.
+
 ## IAs utilizadas — distinção entre assistentes e modelo do aplicativo
 
 | Uso | IA identificada nos registros | O que os materiais permitem afirmar |
@@ -527,7 +552,7 @@ garantia de consumo futuro.
    Gemini.
 5. `implementação api.md` — inclusão do chat no app e sua conexão com a API.
 6. Conversa registrada neste `prompts.md` — deploy, Neon, verificações de
-   produção, cadastro e teste do chat.
+   produção, cadastro, teste do chat e investigação do timeout da API de IA.
 
 Os cinco arquivos originais permanecem em `Downloads`; este índice e os relatos
 acima são a consolidação organizada. A consolidação não acrescenta validações

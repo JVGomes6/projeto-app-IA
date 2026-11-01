@@ -168,6 +168,20 @@ Use o mesmo JSON de exemplo acima. O app usa essa API por meio da constante
 separadamente; seu endereço está configurado em `URL_API`, no arquivo
 `app/servicos/api.js`.
 
+### Tempo de resposta e publicação na Vercel
+
+A função da API de IA tem limite de execução configurado em 60 segundos em
+`api-ia/vercel.json`. Esse valor pode depender dos limites do plano da Vercel.
+Se uma pergunta demorar mais que o limite, a execução termina com timeout.
+O Gemini também pode responder com erro 503 quando estiver temporariamente
+sobrecarregado; nesses casos, aguarde um pouco e tente novamente.
+
+Quando o repositório está conectado à Vercel, um push para a branch de produção
+inicia um novo deploy automaticamente. Acompanhe o deployment mais recente em
+**Deployments** e espere o status **Ready** antes de testar `/saude` e
+`/perguntar`. Para investigar falhas, consulte os **Runtime Logs** do projeto
+da API de IA; erros de timeout aparecem como `Vercel Runtime Timeout Error`.
+
 ## Qual IA é usada: DeepSeek, Z.AI ou outra?
 
 Atualmente, o código **não está configurado para DeepSeek nem Z.AI**. A API usa
