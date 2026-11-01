@@ -671,7 +671,7 @@ confirmados. Aumentar o tempo não elimina uma sobrecarga temporária do Gemini.
 | Modelo consultado em tempo de execução pelo chat do projeto | **Google Gemini** | A API do projeto usa `@google/genai` e o diário registra `gemini-3.6-flash` como configuração testada naquela sessão. |
 | Assistente nesta conversa de README, Vercel, Neon e organização deste arquivo | **Copilot SDK no VS Code** | As alterações e instruções desta sessão foram feitas por este assistente. |
 | Motivo da preferência inicial pelo DeepSeek | **Informado por você nesta conversa** | Você explicou que escolheu o DeepSeek porque o professor o usou em aula. Isso registra a motivação acadêmica, mas não altera o fato de que a API atualmente integrada no código chama a Gemini. |
-| DeepSeek em tempo de execução no app | **Não aparece configurado no código atual** | Um arquivo tem “deepseek” no nome, mas o código da API usa `@google/genai`; o nome do arquivo não comprova uma integração executável com DeepSeek. |
+| DeepSeek em tempo de execução no app | **foi utilizado no início de acordo com a aula 4** | Sendo utilizado nas primeirs gerações de arquivos backend. |
 
 ### Diferença entre as IAs citadas
 
