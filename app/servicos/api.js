@@ -2,8 +2,9 @@
 // Todas as chamadas à API de usuários ficam NESTE arquivo.
 // Para apontar para outro endereço, troque só a constante abaixo.
 // ==============================================================
-const URL_API = 'http://localhost:3000/api/usuarios';
+//const URL_API = 'http://localhost:3000/api/usuarios';
 
+const URL_API = 'https://projeto-app-ia-2h3z.vercel.app/api/usuarios';
 // --------------------------------------------------------------
 // O App.js registra aqui a função que volta ao login quando a API
 // responder 401 em alguma rota protegida (sessão expirada).
