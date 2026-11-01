@@ -94,6 +94,15 @@ app.post('/perguntar', async (req, res) => {
       });
     }
 
+    if (ehErroDeServicoIndisponivel(erro)) {
+      return res.status(503).json({
+        sucesso: false,
+        mensagem:
+          'O serviço do Gemini está temporariamente sobrecarregado. Aguarde um pouco e tente novamente.',
+        dados: null,
+      });
+    }
+
     // Modelo descontinuado ou nome inexistente -> a Gemini responde 404 NOT_FOUND
     // Ex.: "models/gemini-2.5-flash is no longer available to new users"
     if (ehErroDeModeloIndisponivel(erro)) {
@@ -124,6 +133,14 @@ app.post('/perguntar', async (req, res) => {
 });
 
 // A biblioteca @google/genai lança ApiError com a propriedade .status (código HTTP)
+function ehErroDeCotaDiaria(erro) {
+  const texto = String(erro?.message ?? '').toLowerCase();
+  return (
+    (texto.includes('daily') || texto.includes('per day')) &&
+    (texto.includes('quota') || texto.includes('limit'))
+  );
+}
+
 function ehErroDeLimiteDeUso(erro) {
   const texto = String(erro?.message ?? '');
   return (
@@ -131,6 +148,15 @@ function ehErroDeLimiteDeUso(erro) {
     texto.includes('429') ||
     texto.includes('RESOURCE_EXHAUSTED') ||
     texto.toLowerCase().includes('quota')
+  );
+}
+
+function ehErroDeServicoIndisponivel(erro) {
+  const texto = String(erro?.message ?? '').toLowerCase();
+  return (
+    erro?.status === 503 ||
+    texto.includes('high demand') ||
+    texto.includes('overloaded')
   );
 }
 
