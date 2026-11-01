@@ -49,16 +49,15 @@ Crie o banco e a tabela executando o script com o cliente `psql` instalado:
 psql -U postgres -f .\api-usuarios\src\utils\banco.sql
 ```
 
-Crie `api-usuarios/.env` com os dados do seu PostgreSQL e um segredo JWT forte:
+Copie o exemplo de variáveis e substitua os valores indicados pelos dados do
+seu PostgreSQL e por um segredo JWT gerado localmente:
 
-```dotenv
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=app_usuarios
-DB_USER=postgres
-DB_PASSWORD=sua_senha_local_do_postgres
-JWT_SECRET=gere_um_segredo_longo_e_aleatorio
+```powershell
+Copy-Item .\api-usuarios\.env.example .\api-usuarios\.env
 ```
+
+Para produção, configure `DATABASE_URL` e `JWT_SECRET` nas variáveis do
+provedor, sem copiar credenciais reais para o repositório.
 
 Instale as dependências e inicie a API:
 
@@ -218,3 +217,28 @@ modelo não é suficiente.
 Não publique arquivos `.env`, chaves Gemini, senhas de banco, `JWT_SECRET` ou
 tokens. Se uma chave real já tiver sido compartilhada ou enviada ao repositório,
 revogue-a no provedor e gere uma nova.
+
+## Onde está cada requisito no código?
+
+| Requisito | Arquivos |
+|---|---|
+| Rotas de cadastro, login, listagem, busca, alteração e exclusão | `api-usuarios/src/routes/usuarioRoutes.js` e `api-usuarios/src/controllers/UsuarioController.js` |
+| Hash de senha, criação do JWT e acesso ao banco | `api-usuarios/src/controllers/UsuarioController.js` e `api-usuarios/src/config/database.js` |
+| Verificação do token nas rotas protegidas | `api-usuarios/src/middlewares/auth.js` e `api-usuarios/src/routes/usuarioRoutes.js` |
+| Estrutura SQL e testes REST das rotas de usuários | `api-usuarios/src/utils/banco.sql` e `api-usuarios/testes.http` |
+| Variáveis de ambiente de exemplo, sem credenciais reais | `api-usuarios/.env.example` e `api-ia/.env.example` |
+| Token mantido em memória, apagado ao sair e enviado nas chamadas protegidas | `app/App.js` e `app/servicos/api.js` |
+| Exibição da mensagem de erro de login devolvida pela API | `app/telas/Login.js` e `app/servicos/api.js` |
+| Endereço da API de IA usado pelo app e chamada `POST /perguntar` | `app/servicos/ia.js` |
+| Rota de saúde, validações e resposta da API de IA | `api-ia/index.js` |
+| Envio do PDF, modelo Gemini e instrução de sistema | `api-ia/assistente-documento.js` |
+| Exemplos de pedidos REST da API de IA | `api-ia/testes.http` |
+
+## Identificação acadêmica
+
+Este projeto foi desenvolvido como trabalho final da disciplina **Desenvolvimento
+com IA Generativa**, sob orientação do professor **Vinicius Bertuol**, no curso
+de **Licenciatura em Computação** da **Universidade Federal do Paraná — Setor
+Palotina**.
+
+**Autor:** João Vitor de Oliveira Gomes

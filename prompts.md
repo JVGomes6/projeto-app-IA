@@ -255,6 +255,150 @@ fornecidos em `Downloads`:
 - `deepseek_markdown_20261031_00800c.md` — criação, testes e depuração da API de
   IA baseada na Gemini.
 
+### Registro dos prompts das etapas anteriores
+
+Os registros abaixo foram consolidados dos cinco arquivos-fonte listados acima,
+preservando a ordem dos prompts dentro de cada etapa. Quando o próprio arquivo
+de origem marca um prompt como reconstituído, ele continua identificado assim:
+não há como recuperar palavras exatas que não constam nos materiais disponíveis.
+Nenhum conteúdo de arquivo `.env`, senha real ou chave foi copiado para esta
+seção.
+
+#### API de usuários e PostgreSQL
+
+1. **Solicitação inicial (texto registrado no arquivo-fonte):**
+
+   > Vou te mandar em anexo o código de uma API de tarefas feita pelo meu professor, em Node.js, Express 5 e PostgreSQL (CommonJS). A estrutura de pastas é esta: server.js, package.json, src/config/database.js, src/constants/status.js, src/controllers/TarefaController.js, src/models/TarefaModel.js, src/routes/tarefaRoutes.js, src/utils/respostas.js.
+   > O QUE EU QUERO: Transformar essa API de tarefas numa API de cadastro de usuários, que vai servir de login para um aplicativo de celular. Mantenha a mesma organização em camadas e o mesmo formato de resposta.
+   > O BANCO: PostgreSQL, banco app_usuarios, uma tabela só, usuarios, com: id, nome, sobrenome, email, usuario, senha, ativo, data de criação e data de alteração. E-mail e usuário não podem se repetir. Me dê o script banco.sql.
+   > AS ROTAS, em /api/usuarios: Cadastrar e fazer login ficam abertas. Listar todos, buscar por id, alterar e excluir só funcionam para quem fez login.
+   > A SEGURANÇA, que é obrigatória: Senha com bcryptjs, nunca volta em resposta, login confere e devolve token JWT válido por 1 hora dentro de dados.token. Rotas fechadas exigem Authorization: ****** Sem token, 401. JWT_SECRET no .env. .gitignore para node_modules e .env.
+   > PARA RODAR E TESTAR: nodemon, script npm run dev. .env com usuário postgres e senha postgres. testes.http para REST Client com pedidos na ordem: cadastrar, login, listar sem token (401), listar com token, buscar por id, alterar, excluir. Reaproveitar token com # @name login.
+   > COMO ME DEVOLVER: Cada arquivo completo num bloco de código, caminho em cima. Dizer novos, mudados e para apagar. Comandos para rodar no fim.
+
+2. **Problema com npm:** o arquivo-fonte registra saída do terminal mostrando avisos do `npm install`, uma tentativa de digitar `n` e a API rodando, seguida do pedido “me responda em português brasileiro”.
+3. **Erro de autenticação no banco:** imagens do VS Code com erro 500 de autenticação PostgreSQL e do pgAdmin com a tabela criada.
+4. **Erro no pgAdmin:** imagem com “Connection lost” e a pergunta “o que é isso?”
+5. **Senha não resolvida:** “ele continuou pedindo a senha”.
+6. **Edição do `pg_hba.conf`:** imagem do arquivo e a pergunta “assim?”
+7. **Execução do comando SQL:** imagem do pgAdmin com o comando ainda não executado e `\q` no fim; pergunta “assim?”
+
+#### Primeiros estudos e app Expo
+
+1. **Comparação React web × React Native (transcrição do arquivo-fonte):**
+
+   > Pesquise nas duas documentações oficiais, react.dev (React) e reactnative.dev (React Native), e me explique o que muda para quem já fez uma interface em React para o navegador e agora vai fazer um app de celular em React Native.
+   > Quero uma tabela curta, de no máximo 8 linhas, com três colunas: o que eu usava no React web, o que uso no React Native, e uma frase explicando a diferença. Foque no que aparece num app simples: os elementos da tela, o texto, a imagem, o campo de digitar, o botão e o clique, o estilo (CSS) e onde o app roda.
+   > No fim, cite os links das páginas da documentação que você usou.
+
+2. **Primeira versão do app (transcrição do arquivo-fonte):**
+
+   > Agora quero criar um app em React Native, com Expo e em JavaScript, que vai conversar com uma API de usuários que eu já fiz, em Node.js e Express. A API roda em http://localhost:3000 e tem a rota GET /saude, que responde {"status":"OK"}.
+   > A estrutura de pastas vai ser esta, com a API e o app lado a lado:
+   > projeto-app/
+   >   api-tarefas/ (o original do professor, não mexer)
+   >   api-usuarios/ (a API de usuários, já pronta)
+   >   app/ (o app novo)
+   > O QUE EU QUERO NESTA PRIMEIRA VERSÃO: uma tela só, que chama GET /saude a cada 5 segundos e mostra “API conectada” em verde quando responde e “Sem conexão com a API” em vermelho quando não responde. Deixe o endereço da API numa constante no topo do arquivo, com um comentário.
+   > COMO VOU RODAR: no navegador, com o Expo para web, no meu computador com Windows.
+   > COMO ME DEVOLVER: (1) comandos para criar o projeto na pasta app usando o template blank e instalar o que falta para o navegador; (2) App.js completo; (3) comando para rodar.
+
+3. **Pedido do arquivo de prompts:** “faça um arquivo "prompts.md" para eu baixar com todos os prompts que eu te enviei com o o que você decidiu sozinha e o que eu decidi por você? e o que você errou”.
+
+#### App de usuários (React Native + Expo)
+
+O arquivo-fonte marca os prompts 1 a 4 como reconstituídos; as palavras abaixo
+reproduzem essa reconstituição, não uma transcrição literal:
+
+1. **Pedido inicial (reconstituído):**
+
+   > Continuar um app React Native + Expo (JavaScript, template blank, rodando na web no Windows) que conversa com a API de usuários pronta (Node/Express em http://localhost:3000, respostas no formato `{ sucesso, mensagem, dados }`).
+   > Estrutura: `projeto-app/` contendo `api-tarefas/` (não mexer), `api-usuarios/` (não mexer) e `app/`.
+   > Telas: Login (usuário/senha; recusa mostra a mensagem da API), Cadastro (nome, sobrenome, e-mail, usuário, senha → volta ao login), Principal (pós-login, “Olá, <nome>”, botão para usuários, botão sair, resto em branco para futuro chat), Usuarios (lista da API + busca por nome), EditarUsuario (abre ao tocar num usuário; altera nome/sobrenome/e-mail/usuário; excluir com confirmação).
+   > Regras de token: login devolve `dados.token`; token só na memória do app; rotas fechadas levam `Authorization: ******`; 401 volta ao login com “Sua sessão expirou, entre de novo”; sair apaga o token; token/senha nunca aparecem na tela.
+   > Organização: sem biblioteca de navegação (App.js guarda a tela por estado), um arquivo por tela em `app/telas/`, todas as chamadas em `app/servicos/api.js` com a URL em constante no topo, visual simples que caiba em celular.
+   > Entrega: árvore de arquivos, arquivos completos em blocos de código com caminho, comandos de instalação se preciso.
+   > Anexo: conteúdo do `testes.http` com as rotas POST /api/usuarios, POST /api/usuarios/login, GET /api/usuarios, GET /api/usuarios/:id, PUT /api/usuarios/:id, DELETE /api/usuarios/:id.
+
+2. **Conferência da árvore (reconstituído):** “era para ficar assim?”, com uma imagem da árvore de arquivos do projeto aberta no VS Code.
+3. **Erro ao iniciar o Expo (reconstituído):** “o npm run dev ja está ativo em um terminal / isso eu coloquei em outro terminal o que está dando de errado?”, com log de `npm expo start --web` respondendo `Unknown command: 'expo'`.
+4. **Novos requisitos (reconstituído):**
+
+   > faltou adicionar o botão de 'sair' no aplicativo / o usuário logado deve alterar apenas as suas informações, as informações de outro usuário ele não pode mexer / coloque avisos e botões de confirmação / antes de mais nada me dê um passo a passo para eu enviar este projeto para o meu GitHub / depois me retorne um passo a passo completo com tudo que eu preciso fazer para adicionarmos as novas alterações.
+
+Os prompts 5 a 8 estão registrados como literais:
+
+5. **Botão sair na tela de usuários:** “coloque um botão de 'sair' nesta tela que ao clicar no botão e ele me leve novamente a tela de login.”
+6. **Integração com o `App.js`:** envio do código completo do `App.js` e pergunta sobre onde inserir `<Usuarios token={token} idLogado={idLogado} abrirUsuario={abrirUsuario} aoSair={sairDoApp} />`.
+7. **Restrição de edição:** “chat infelizmente um usuário pode fazer alterações nas informações de outro usuário como nome sobrenome email e usuário. faça um código que o usuário não pode mudar estes campos de outros usuários.”
+8. **Arquivo `prompts.md`:** “faça um arquivo prompts.md para eu baixar com todos os prompts que eu te enviei com o o que você decidiu sozinha e o que eu decidi por você? e o que você errou”.
+
+#### Chat de IA no app
+
+1. **Adicionar o chat (transcrição do arquivo-fonte):**
+
+   > Tenho um app em React Native, com Expo e em JavaScript, que roda no navegador. Ele já tem login, e depois do login abre a tela principal, que está no fim desta mensagem. Quero colocar nela um chat que conversa com uma API de IA que eu já fiz e que está on-line.
+   >
+   > A API DA IA
+   >
+   > O endereço fica numa constante no topo de um arquivo novo, app/servicos/ia.js, separado do api.js que já existe. Por enquanto use https://SEU-PROJETO.vercel.app, que eu troco pelo meu.
+   > POST /perguntar, com o corpo { "pergunta": "..." }.
+   > Responde { sucesso, mensagem, dados }, com a resposta em dados.resposta e os tokens gastos em dados.tokens.
+   > Se der erro, sucesso vem false e o motivo vem em mensagem (por exemplo, 429 quando passa do limite de uso).
+   > Esta API não precisa do token do login.
+   >
+   > O QUE EU QUERO NA TELA PRINCIPAL
+   >
+   > Manter o "Olá, " e os botões de usuários e de sair, que já existem.
+   > Embaixo, o chat: as mensagens em balões, as minhas à direita e as da IA à esquerda, um campo para digitar e um botão de enviar.
+   > Enquanto a IA responde, mostrar "Pensando..." e não deixar mandar outra pergunta.
+   > Embaixo de cada resposta da IA, em letra pequena e cinza, quantos tokens ela gastou.
+   > Se a API der erro, mostrar a mensagem dela no chat, em vermelho.
+   > A conversa fica só na memória: sair do app apaga.
+   >
+   > COMO ME DEVOLVER
+   >
+   > Os arquivos novos e os alterados.
+   > Cada arquivo completo, do começo ao fim, num bloco de código separado, com o caminho escrito em cima.
+   > A TELA PRINCIPAL DE HOJE (app/telas/TelaPrincipal.js) [o arquivo-fonte registra que o código completo da tela foi anexado ao pedido; ele não está reproduzido aqui].
+
+2. **Erro de conexão:** “Deu este erro ao rodar. Corrija e me devolva inteiros os arquivos que mudarem.” Acompanhado de quatro imagens do app, dos terminais das APIs e do Expo.
+3. **Conversa funcionando:** “chat deu certo está correndo perfeitamente. Você consegue acessar outras conversdas qeu eu tenho no Z.ai?”
+4. **Pedido do arquivo:** “faça um arquivo "prompts.md" em formato para eu copiar e colar com todos os prompts que eu te enviei com o o que você decidiu sozinha e o que eu decidi por você? e o que você errou”.
+
+#### API de IA (`api-ia`)
+
+O documento-fonte identifica os prompts 1 a 7 como reconstituídos ou resumidos;
+seguem com a mesma ressalva:
+
+1. Criar uma API `api-ia` com Node.js, Express e JavaScript CommonJS para responder perguntas com base no PDF `api-ia/documentos/regulamento-tcc.pdf`, usando a Gemini API e documentação oficial; o projeto já contém `api-tarefas/`, `api-usuarios/` e `app/`.
+2. Conferir a estrutura de pastas (imagem).
+3. Enviar o resultado de `git check-ignore -v api-ia\.env`.
+4. Enviar o resultado de `npm install` e `npm run dev`.
+5. Informar que os testes 1, 4 e 5 passaram.
+6. Perguntar se a chave do AI Studio no formato novo iniciado por `AQ.` funciona.
+7. Relatar erro 429 no `gemini-3.8-flash` e erro 500 nos modelos `gemini-2.5-flash` e `gemini-2.0-flash`.
+
+O documento-fonte identifica os registros seguintes como literais ou associados
+a logs/imagens:
+
+8. Enviar o log de erro 404 do modelo `gemini-2.5-flash` e dizer “no segundo teste”.
+9. Pedir: “me passe os códigos completos para eu copiar e colar e substituir os arquivos inteiros”.
+10. Enviar o PDF e dizer: “é este o tcc que eu coloquei, está tudo assim.”
+11. Relatar “ERRO DE NOVO DE LIMITE DE GEMINI”, com imagem do erro.
+12. Relatar “A 2 DEU CERTO A TRES DEU ERRO DE SERVIDOR E A 6 DEU ERRO DE SERVIDOR”, acompanhado de log.
+13. Informar: “todos deram certo”.
+14. Pedir um arquivo `prompts.md` com os prompts enviados, decisões de cada parte e erros da assistente.
+
+Os registros 8 e 12 foram associados a logs; as imagens e os logs originais não
+são reproduzidos nesta transcrição.
+
+#### Publicação e conferências atuais
+
+Os prompts desta etapa permanecem na seção inicial **“Prompts enviados”**,
+na ordem em que foram registrados nesta conversa. Capturas são descritas junto
+aos respectivos pedidos; valores de credenciais não foram copiados.
+
 Os registros se sobrepõem e alguns prompts são identificados nos próprios
 arquivos como reconstituídos, não literais. Por isso, a ordem abaixo representa
 a sequência lógica do projeto. Só atribuo datas exatas quando elas aparecem nos
@@ -554,6 +698,7 @@ confirmados. Aumentar o tempo não elimina uma sobrecarga temporária do Gemini.
 6. Conversa registrada neste `prompts.md` — deploy, Neon, verificações de
    produção, cadastro, teste do chat e investigação do timeout da API de IA.
 
-Os cinco arquivos originais permanecem em `Downloads`; este índice e os relatos
-acima são a consolidação organizada. A consolidação não acrescenta validações
-externas nem transforma prompts reconstituídos em transcrições literais.
+Os cinco arquivos-fonte continuam em `Downloads`; seus prompts e registros
+disponíveis foram consolidados acima. A consolidação não acrescenta validações
+externas nem transforma prompts que as fontes marcam como reconstituídos em
+transcrições literais.
