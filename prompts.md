@@ -670,7 +670,8 @@ confirmados. Aumentar o tempo não elimina uma sobrecarga temporária do Gemini.
 | Assistente nas sessões anteriores sobre a API de usuários, o app Expo, o chat e a API de IA | **Z.ai (GLM)** | Os arquivos de histórico identificam explicitamente a assistente como Z.ai, modelo GLM. |
 | Modelo consultado em tempo de execução pelo chat do projeto | **Google Gemini** | A API do projeto usa `@google/genai` e o diário registra `gemini-3.6-flash` como configuração testada naquela sessão. |
 | Assistente nesta conversa de README, Vercel, Neon e organização deste arquivo | **Copilot SDK no VS Code** | As alterações e instruções desta sessão foram feitas por este assistente. |
-| DeepSeek | **Não há confirmação de uso nos registros** | Um arquivo tem “deepseek” no nome, mas o conteúdo identifica Z.ai (GLM) como assistente e Gemini como modelo da API. O nome do arquivo, por si só, não prova uso do DeepSeek. |
+| Motivo da preferência inicial pelo DeepSeek | **Informado por você nesta conversa** | Você explicou que escolheu o DeepSeek porque o professor o usou em aula. Isso registra a motivação acadêmica, mas não altera o fato de que a API atualmente integrada no código chama a Gemini. |
+| DeepSeek em tempo de execução no app | **Não aparece configurado no código atual** | Um arquivo tem “deepseek” no nome, mas o código da API usa `@google/genai`; o nome do arquivo não comprova uma integração executável com DeepSeek. |
 
 ### Diferença entre as IAs citadas
 
@@ -679,7 +680,8 @@ confirmados. Aumentar o tempo não elimina uma sobrecarga temporária do Gemini.
   diferentes.
 - **Gemini** é o provedor/modelo que o aplicativo chama pela API de IA.
 - **DeepSeek** é citado na pergunta inicial sobre qual IA usar, mas os materiais
-  fornecidos não registram uma integração nem uma chamada concluída com ele.
+  do projeto não mostram uma integração dele em tempo de execução. Você explicou
+  que a preferência veio do uso feito pelo professor em aula.
 - Os registros diferem sobre a configuração do modelo Gemini: o diário da API
   informa `gemini-3.6-flash` como o modelo validado em 26/10/2026; o histórico
   desta conversa observou no repositório um exemplo com `gemini-3.8-flash` e

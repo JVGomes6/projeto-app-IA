@@ -183,16 +183,17 @@ da API de IA; erros de timeout aparecem como `Vercel Runtime Timeout Error`.
 
 ## Qual IA é usada: DeepSeek, Z.AI ou outra?
 
-Atualmente, o código **não está configurado para DeepSeek nem Z.AI**. A API usa
-a **Gemini**, pela biblioteca oficial `@google/genai`, e o modelo configurado
-por padrão é `gemini-3.8-flash`.
+O DeepSeek foi considerado inicialmente por ter sido utilizado pelo professor
+em aula, o que tornou essa ferramenta familiar para o desenvolvimento do
+trabalho. No entanto, o código atualmente **não está configurado para DeepSeek
+nem Z.AI**: a API usa a **Gemini**, pela biblioteca oficial `@google/genai`, e
+o modelo padrão no código é `gemini-3.8-flash`.
 
-Essa escolha permite enviar o PDF junto com a pergunta diretamente ao modelo,
-e a integração Gemini já está implementada no projeto. A instrução do sistema
-orienta a resposta a usar somente o documento, citar a seção/artigo e informar
-quando não encontrar a resposta. Para trocar para DeepSeek ou Z.AI seria
-necessário alterar a integração da API; basta trocar a chave ou o nome do
-modelo não é suficiente.
+A integração atual permite enviar o PDF junto com a pergunta ao modelo. A
+instrução do sistema orienta a resposta a usar somente o documento, citar a
+seção/artigo e informar quando não encontrar a resposta. Para usar DeepSeek ou
+Z.AI em tempo de execução, seria necessário adaptar a integração da API; basta
+trocar a chave ou o nome do modelo não é suficiente.
 
 ## Onde ficam a chave, o token e a senha?
 
